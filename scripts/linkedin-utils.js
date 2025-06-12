@@ -4,6 +4,13 @@ function isLinkedInProfile() {
     return window.location.href.includes('linkedin.com/in/');
 }
 
+// Make functions globally available
+window.isLinkedInProfile = isLinkedInProfile;
+window.isElementVisible = isElementVisible;
+window.waitForElement = waitForElement;
+window.randomDelay = randomDelay;
+window.debugPageStructure = debugPageStructure;
+
 // Check if element is actually visible and clickable
 function isElementVisible(element) {
     if (!element) return false;

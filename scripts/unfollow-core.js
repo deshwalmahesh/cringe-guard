@@ -1,5 +1,6 @@
 // Core unfollow functionality
 let isProcessing = false;
+let hasReloaded = false; // Track if we've already reloaded once
 
 // Main unfollow function
 async function unfollowProfile() {
@@ -31,106 +32,84 @@ async function unfollowProfile() {
         // Add random delay before starting
         await randomDelay(500, 2000);
 
-        // Find More button - target the one in main profile section
-        const moreSelectors = [
-            '.ph5 button[aria-label="More actions"][id*="profile-overflow-action"]',
-            'button[aria-label="More actions"][id*="profile-overflow-action"]',
-            'button[aria-label*="More actions"]',
-            // Try direct Following button first (scenario 2)
-            'button[aria-label*="Following"]'
-        ];
-
+        // Simple logic: check for "Following" button first, if not found then look for "More" button
+        let followingButton = null;
         let moreButton = null;
-        let isDirectFollowingButton = false;
         
-        for (const selector of moreSelectors) {
-            moreButton = await waitForElement(selector, 2000);
-            if (moreButton) {
-                // Check if this is a direct Following button
-                if (moreButton.textContent.toLowerCase().includes('following')) {
-                    isDirectFollowingButton = true;
+        // First, look for "Following" button
+        const buttons = document.querySelectorAll('button');
+        console.log(`[UNFOLLOW] Found ${buttons.length} total buttons on page`);
+        
+        for (const btn of buttons) {
+            const text = btn.textContent.trim().toLowerCase();
+            if (text === 'following' && isElementVisible(btn)) {
+                followingButton = btn;
+                console.log('[UNFOLLOW] Found Following button:', btn);
+                break;
+            }
+        }
+        
+        // If Following button found, click it and unfollow
+        if (followingButton) {
+            console.log('[UNFOLLOW] Clicking Following button');
+            followingButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            await randomDelay(300, 800);
+            followingButton.click();
+            
+            // Wait for confirmation modal to appear
+            await randomDelay(1000, 2000);
+            
+            // Find and click confirmation button
+            const modalButtons = document.querySelectorAll('.artdeco-modal button, [role="alertdialog"] button');
+            console.log(`[UNFOLLOW] Found ${modalButtons.length} modal buttons`);
+            for (const btn of modalButtons) {
+                const btnText = btn.textContent.toLowerCase();
+                console.log(`[UNFOLLOW] Checking modal button: "${btnText}"`);
+                if (btnText.includes('unfollow') && isElementVisible(btn)) {
+                    await randomDelay(300, 800);
+                    btn.click();
+                    console.log('[UNFOLLOW] Unfollow completed via Following button!');
+                    await randomDelay(1000, 2000);
+                    window.close();
+                    return { success: true, message: 'Unfollow completed successfully', shouldClose: true };
                 }
+            }
+            console.log('[UNFOLLOW] No confirmation button found');
+            return { success: false, message: 'No confirmation button found' };
+        }
+        
+        console.log('[UNFOLLOW] No Following button found, looking for More button...');
+        
+        // If no Following button, look for More button
+        for (const btn of buttons) {
+            const text = btn.textContent.trim().toLowerCase();
+            console.log(`[UNFOLLOW] Checking button: "${text}" | visible: ${isElementVisible(btn)} | id: "${btn.id}" | aria-label: "${btn.getAttribute('aria-label')}"`);
+            if (text === 'more' && 
+                isElementVisible(btn) &&
+                (btn.id.includes('profile-overflow-action') || 
+                 btn.getAttribute('aria-label') === 'More actions')) {
+                moreButton = btn;
+                console.log('[UNFOLLOW] Found More button:', btn);
                 break;
             }
         }
 
         if (!moreButton) {
-            // Try finding in main profile section specifically
-            const buttons = document.querySelectorAll('.ph5 button, button');
-            for (const btn of buttons) {
-                const text = btn.textContent.trim().toLowerCase();
-                // Check for direct Following button first
-                if (text === 'following' && isElementVisible(btn)) {
-                    moreButton = btn;
-                    isDirectFollowingButton = true;
-                    console.log('Found direct Following button');
-                    break;
-                }
-                // Then check for More button
-                if (text === 'more' && 
-                    isElementVisible(btn) &&
-                    (btn.id.includes('profile-overflow-action') || 
-                     btn.getAttribute('aria-label') === 'More actions')) {
-                    moreButton = btn;
-                    console.log('Found More button by text content');
-                    break;
-                }
+            console.log('[UNFOLLOW] No More button found');
+            
+            // Try reloading once if we haven't already (covers case: no Following AND no More)
+            if (!hasReloaded) {
+                console.log('[UNFOLLOW] Attempting reload and retry...');
+                hasReloaded = true;
+                isProcessing = false;
+                chrome.runtime.sendMessage({ action: "reloadTab" });
+                return { success: false, message: 'Reloading and retrying' };
             }
+            
+            return { success: false, message: 'No More button found after reload' };
         }
 
-        if (!moreButton) {
-            console.log('No More/Following button found');
-            return { success: false, message: 'No More/Following button found' };
-        }
-
-        // Handle direct Following button (scenario 2)
-        if (isDirectFollowingButton) {
-            console.log('Clicking direct Following button');
-            moreButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            await randomDelay(300, 800);
-            moreButton.click();
-            
-            // Wait for confirmation modal to appear directly
-            await randomDelay(1000, 2000);
-            
-            // Find confirmation button
-            const modalSelectors = [
-                'button[data-test-dialog-primary-btn=""]',
-                '.artdeco-modal button[data-test-dialog-primary-btn]'
-            ];
-
-            let confirmBtn = null;
-            
-            for (const selector of modalSelectors) {
-                confirmBtn = document.querySelector(selector);
-                if (confirmBtn && isElementVisible(confirmBtn) && 
-                    confirmBtn.textContent.toLowerCase().includes('unfollow')) break;
-            }
-
-            if (!confirmBtn) {
-                const modalButtons = document.querySelectorAll('.artdeco-modal button, [role="alertdialog"] button');
-                for (const btn of modalButtons) {
-                    if (btn.textContent.toLowerCase().includes('unfollow') && 
-                        isElementVisible(btn)) {
-                        confirmBtn = btn;
-                        break;
-                    }
-                }
-            }
-
-            if (confirmBtn) {
-                await randomDelay(300, 800);
-                confirmBtn.click();
-                console.log('Unfollow completed via direct Following button!');
-                await randomDelay(1000, 2000);
-                window.close();
-                return { success: true, message: 'Unfollow completed successfully', shouldClose: true };
-            } else {
-                console.log('No confirmation button found for direct Following');
-                return { success: false, message: 'No confirmation button found' };
-            }
-        }
-
+        console.log('[UNFOLLOW] Found More button, proceeding with dropdown flow...');
         // Scroll to button and click
         moreButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
         await randomDelay(300, 800);
@@ -198,36 +177,18 @@ async function unfollowProfile() {
         }
         
         if (!unfollowBtn) {
-            console.log('No unfollow option found in dropdown - checking if already following...');
+            console.log('No unfollow option found in dropdown');
             
-            // Check if there's a "Follow" button on the page (meaning we're not following)
-            const followButtons = document.querySelectorAll('button');
-            let isFollowing = false;
-            for (const btn of followButtons) {
-                const text = btn.textContent.trim().toLowerCase();
-                if (text === 'following' || text === 'unfollow') {
-                    isFollowing = true;
-                    break;
-                }
+            // Try reloading once if we haven't already
+            if (!hasReloaded) {
+                console.log('Attempting reload and retry...');
+                hasReloaded = true;
+                isProcessing = false;
+                chrome.runtime.sendMessage({ action: "reloadTab" });
+                return { success: false, message: 'Reloading and retrying' };
             }
             
-            // Debug: Show what options ARE available
-            const allDropdownItems = document.querySelectorAll('.artdeco-dropdown__item');
-            console.log('Available dropdown options:');
-            allDropdownItems.forEach((item, i) => {
-                const text = item.textContent.trim();
-                const ariaLabel = item.getAttribute('aria-label') || '';
-                console.log(`  ${i}: "${text}" | aria-label: "${ariaLabel}"`);
-            });
-            
-            if (!isFollowing) {
-                // Don't close tab if no unfollow option and not following
-                return { success: true, message: 'Not following this profile', shouldClose: false };
-            } else {
-                // If we are following but no unfollow in dropdown, try clicking More again
-                console.log('Following but no unfollow option found, retrying...');
-                return { success: false, message: 'Following but unfollow option not found' };
-            }
+            return { success: false, message: 'No unfollow option found after reload' };
         }
 
         // Click unfollow with delay
@@ -285,7 +246,20 @@ async function unfollowProfile() {
 
     } catch (error) {
         console.error('Unfollow error:', error);
+        
+        // Try reloading once if we haven't already
+        if (!hasReloaded) {
+            console.log('Attempting reload and retry...');
+            hasReloaded = true;
+            chrome.runtime.sendMessage({ action: "reloadTab" });
+            return { success: false, message: 'Reloading and retrying' };
+        }
+        
+        return { success: false, message: error.message };
     } finally {
         isProcessing = false;
     }
 }
+
+// Make function globally available
+window.unfollowProfile = unfollowProfile;

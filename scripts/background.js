@@ -27,6 +27,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         
         return true; // Keep message channel open for async response
     }
+    
+    if (request.action === "reloadTab") {
+        console.log(`[Background] Reloading tab: ${sender.tab?.id}`);
+        if (sender.tab?.id) {
+            chrome.tabs.reload(sender.tab.id);
+            sendResponse({ success: true });
+        } else {
+            sendResponse({ success: false, error: "No tab ID" });
+        }
+        return true;
+    }
 });
 
 // Handle extension installation

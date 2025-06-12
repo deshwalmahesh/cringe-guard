@@ -125,8 +125,9 @@ async function handleAcceptRequests() {
     try {
         button.textContent = "Navigating...";
         button.disabled = true;
+        button.classList.add("loading");
         statusSpan.textContent = "Navigating";
-        statusSpan.style.background = "#ffc107";
+        statusSpan.className = "status-badge processing";
         
         // Get current active tab
         const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -175,27 +176,29 @@ async function handleAcceptRequests() {
         
         if (result.success) {
             statusSpan.textContent = `Processed ${result.processed}`;
-            statusSpan.style.background = "#28a745";
+            statusSpan.className = "status-badge success";
             console.log(`[Accept Requests] Successfully processed ${result.processed} requests`);
         } else {
             statusSpan.textContent = "Error occurred";
-            statusSpan.style.background = "#dc3545";
+            statusSpan.className = "status-badge danger";
             console.error("[Accept Requests] Error in processing:", result.error);
         }
         
         setTimeout(() => {
             button.textContent = "Accept Requests";
             button.disabled = false;
+            button.classList.remove("loading");
             statusSpan.textContent = "Ready";
-            statusSpan.style.background = "#6c757d";
+            statusSpan.className = "status-badge ready";
         }, 5000); // Longer timeout to see results
         
     } catch (error) {
         console.error("[Accept Requests] Error in handleAcceptRequests:", error);
         statusSpan.textContent = "Error";
-        statusSpan.style.background = "#dc3545";
+        statusSpan.className = "status-badge danger";
         button.textContent = "Accept Requests";
         button.disabled = false;
+        button.classList.remove("loading");
     }
 }
 
@@ -209,14 +212,15 @@ async function handleBulkUnfollow() {
         
         if (tabs.length === 0) {
             statusSpan.textContent = "No profile tabs found";
-            statusSpan.style.background = "#dc3545";
+            statusSpan.className = "status-badge danger";
             return;
         }
         
         button.textContent = "Processing...";
         button.disabled = true;
+        button.classList.add("loading");
         statusSpan.textContent = `Processing ${tabs.length} tab(s)`;
-        statusSpan.style.background = "#ffc107";
+        statusSpan.className = "status-badge processing";
         
         // Process all tabs in parallel - start ALL immediately with individual random delays
         const promises = tabs.map((tab, index) => {
@@ -251,22 +255,22 @@ async function handleBulkUnfollow() {
         const successful = results.filter(r => r.success).length;
         
         statusSpan.textContent = `Done: ${successful}/${tabs.length}`;
-        statusSpan.style.background = successful > 0 ? "#28a745" : "#dc3545";
+        statusSpan.className = successful > 0 ? "status-badge success" : "status-badge danger";
         
         setTimeout(() => {
             button.textContent = "Start Bulk Unfollow";
             button.disabled = false;
-            button.style.background = "#ff6b6b";
+            button.classList.remove("loading");
             statusSpan.textContent = "Ready";
-            statusSpan.style.background = "#6c757d";
+            statusSpan.className = "status-badge ready";
         }, 3000);
         
     } catch (error) {
         statusSpan.textContent = "Error";
-        statusSpan.style.background = "#dc3545";
+        statusSpan.className = "status-badge danger";
         button.textContent = "Start Bulk Unfollow";
         button.disabled = false;
-        button.style.background = "#ff6b6b";
+        button.classList.remove("loading");
     }
 }
 
@@ -276,10 +280,10 @@ function updateBulkUnfollowStatus() {
         const statusSpan = document.getElementById("unfollow-status");
         if (tabs.length > 0) {
             statusSpan.textContent = `${tabs.length} profile(s)`;
-            statusSpan.style.background = "#28a745";
+            statusSpan.className = "status-badge success";
         } else {
             statusSpan.textContent = "No profiles";
-            statusSpan.style.background = "#6c757d";
+            statusSpan.className = "status-badge ready";
         }
     });
 }
