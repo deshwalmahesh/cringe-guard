@@ -33,6 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadButton = document.getElementById("download-jobs");
     downloadButton.addEventListener("click", downloadAIJobPosts);
 
+    // Add event listener for bulk unfollow button
+    const bulkUnfollowButton = document.getElementById("bulk-unfollow-btn");
+    bulkUnfollowButton.addEventListener("click", handleBulkUnfollow);
+
+    // Update bulk unfollow status
+    updateBulkUnfollowStatus();
+
     // take user to the settings page
     const settingsButton = document.querySelector('.settings-icon');
     settingsButton.addEventListener('click', () => {
@@ -98,5 +105,90 @@ function downloadAIJobPosts() {
         
         // Update the UI to reflect the empty job posts
         updateAIJobPostsSection();
+    });
+}
+
+// Function to handle bulk unfollow action
+async function handleBulkUnfollow() {
+    const button = document.getElementById("bulk-unfollow-btn");
+    const statusSpan = document.getElementById("unfollow-status");
+    
+    try {
+        const tabs = await chrome.tabs.query({ url: "https://www.linkedin.com/in/*" });
+        
+        if (tabs.length === 0) {
+            statusSpan.textContent = "No profile tabs found";
+            statusSpan.style.background = "#dc3545";
+            return;
+        }
+        
+        button.textContent = "Processing...";
+        button.disabled = true;
+        statusSpan.textContent = `Processing ${tabs.length} tab(s)`;
+        statusSpan.style.background = "#ffc107";
+        
+        // Process all tabs in parallel - start ALL immediately with individual random delays
+        const promises = tabs.map((tab, index) => {
+            // Random delay between 1-5 seconds for each tab
+            const randomDelay = Math.floor(Math.random() * 4000) + 1000; // 1000-5000ms
+            
+            return new Promise(async (resolve) => {
+                try {
+                    // Wait for this tab's random delay
+                    await new Promise(r => setTimeout(r, randomDelay));
+                    
+                    // Try to send message, inject script if needed
+                    try {
+                        const result = await chrome.tabs.sendMessage(tab.id, { action: "startBulkUnfollow" });
+                        resolve(result);
+                    } catch {
+                        await chrome.scripting.executeScript({
+                            target: { tabId: tab.id },
+                            files: ['scripts/bulk_unfollow.js']
+                        });
+                        await new Promise(r => setTimeout(r, 500));
+                        const result = await chrome.tabs.sendMessage(tab.id, { action: "startBulkUnfollow" });
+                        resolve(result);
+                    }
+                } catch (error) {
+                    resolve({ success: false, error: error.message });
+                }
+            });
+        });
+        
+        const results = await Promise.all(promises);
+        const successful = results.filter(r => r.success).length;
+        
+        statusSpan.textContent = `Done: ${successful}/${tabs.length}`;
+        statusSpan.style.background = successful > 0 ? "#28a745" : "#dc3545";
+        
+        setTimeout(() => {
+            button.textContent = "Start Bulk Unfollow";
+            button.disabled = false;
+            button.style.background = "#ff6b6b";
+            statusSpan.textContent = "Ready";
+            statusSpan.style.background = "#6c757d";
+        }, 3000);
+        
+    } catch (error) {
+        statusSpan.textContent = "Error";
+        statusSpan.style.background = "#dc3545";
+        button.textContent = "Start Bulk Unfollow";
+        button.disabled = false;
+        button.style.background = "#ff6b6b";
+    }
+}
+
+// Function to update bulk unfollow status
+function updateBulkUnfollowStatus() {
+    chrome.tabs.query({ url: "https://www.linkedin.com/in/*" }, (tabs) => {
+        const statusSpan = document.getElementById("unfollow-status");
+        if (tabs.length > 0) {
+            statusSpan.textContent = `${tabs.length} profile(s)`;
+            statusSpan.style.background = "#28a745";
+        } else {
+            statusSpan.textContent = "No profiles";
+            statusSpan.style.background = "#6c757d";
+        }
     });
 }
