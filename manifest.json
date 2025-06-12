@@ -4,6 +4,9 @@
     "author": "Pankaj Tanwar",
     "version": "0.0.3",
     "description": "AI-powered Chrome extension that filters cringe, clickbait & low-value posts from your LinkedIn feed in real-time.",
+    "background": {
+        "service_worker": "scripts/background.js"
+    },
     "content_scripts": [
         {
             "js": [
@@ -17,7 +20,8 @@
             "js": [
                 "scripts/linkedin-utils.js",
                 "scripts/unfollow-core.js",
-                "scripts/bulk_unfollow.js"
+                "scripts/bulk_unfollow.js",
+                "scripts/accept-requests.js"
             ],
             "matches": [
                 "https://www.linkedin.com/*"
