@@ -88,4 +88,4 @@ Contributions are welcome! Please feel free to submit issues, feature requests, 
 
 ## Acknowledgments
 
-[Pankaj Tanwar](https://twitter.com/the2ndfloorguy) for initial work and inspiration
+[Pankaj Tanwar's Cringe Guard](https://github.com/Pankajtanwarbanna/cringe-guard) for initial work and inspiration
