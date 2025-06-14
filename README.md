@@ -1,93 +1,91 @@
-# LinkedIn Power Tools 🚀
+# LinkedIn Power Tools
 
-A comprehensive LinkedIn utility extension that enhances your LinkedIn experience with powerful automation tools and AI-powered features. This Chrome extension provides all the essential utilities that LinkedIn lacks, making your networking and content management more efficient.
+A comprehensive LinkedIn utility extension that enhances your LinkedIn experience with AI-powered content filtering, automation tools, and bulk operations. This Chrome extension provides essential LinkedIn utilities for improved productivity and content management.
 
-## ✨ Features
+## Features
 
-### 🤖 AI-Powered Feed Filtering
-- **Smart Content Filtering**: Uses AI to analyze and filter out low-quality content (engagement bait, promotional spam, off-topic posts)
-- **Real-time Analysis**: Posts are analyzed in real-time as you scroll through your feed
-- **Customizable**: Control what types of posts to filter with AI-powered classification
+### AI-Powered Feed Filtering
+- **Smart Content Analysis**: Uses AI to identify and filter low-quality content including engagement bait, promotional spam, and off-topic posts
+- **Real-time Processing**: Analyzes posts as you scroll through your LinkedIn feed
+- **Customizable Filtering**: Configure AI filtering preferences through extension settings
 
-### 🔗 Connection Management
-- **Bulk Accept Requests**: Automatically accept multiple connection requests with configurable limits
-- **Smart Batch Processing**: Accepts requests with random delays to avoid detection
-- **Progress Tracking**: Real-time status updates during processing
+### Connection Management
+- **Bulk Accept Requests**: Automatically accept multiple connection requests with smart batch processing
+- **Rate Limiting**: Built-in delays and limits to avoid detection
+- **Progress Tracking**: Real-time status updates during bulk operations
 
-### 👥 Bulk Unfollow Tools
-- **Multi-tab Unfollow**: Unfollow people across multiple LinkedIn profile tabs simultaneously
+### Bulk Unfollow Tools
+- **Multi-tab Processing**: Unfollow people across multiple LinkedIn profile tabs simultaneously
 - **Intelligent Detection**: Automatically detects Following status and handles different UI scenarios
-- **Safe Automation**: Built-in delays and error handling to prevent account issues
+- **Safe Automation**: Random delays and error handling to prevent account restrictions
 
-### 💼 Job Post Tracking
-- **AI Job Detection**: Automatically identifies and collects AI/tech job posts from your feed
-- **Export Functionality**: Download collected job posts as JSON files with timestamps
-- **24-hour Tracking**: Tracks and aggregates job posts found in the last 24 hours
+### Job Post Tracking
+- **AI Job Detection**: Automatically identifies and collects AI/tech job postings from your feed
+- **Data Export**: Download collected job posts as JSON files with contact information
+- **24-hour Aggregation**: Tracks job posts found within the last 24 hours
 
-### 📊 Analytics & Insights
-- **Content Statistics**: Track how many posts have been filtered and time saved
-- **Usage Metrics**: Monitor your extension usage and productivity gains
-- **Export Data**: Download your data for external analysis
+### Analytics & Insights
+- **Content Statistics**: Track filtered posts count and estimated time saved
+- **Usage Metrics**: Monitor extension usage and productivity improvements
+- **Data Export**: Download analytics data for external analysis
 
 ## Demo
 
 ![LinkedIn Power Tools Demo](./images/demo-cringe-guard.gif)
 
-## How it works?
+## How it works
 
-LinkedIn Power Tools enhances your LinkedIn experience through multiple integrated features:
+### AI Feed Filtering
+1. **Content Detection**: Extension detects new posts as they appear in your LinkedIn feed
+2. **AI Analysis**: Post content is analyzed using Groq's API to classify content quality
+3. **Smart Filtering**: Low-quality posts are blurred with click-to-view functionality
+4. **Job Highlighting**: AI-identified job posts are highlighted with special badges
 
-### 🤖 AI Feed Filtering
-1. **Detects New Posts**: As new posts appear in your feed, the extension detects them in real time
-2. **AI Analysis**: Post content is sent to an AI model (via Groq API) that classifies it based on quality criteria
-3. **Smart Filtering**: Low-quality posts (engagement bait, spam, off-topic content) are blurred or hidden
-4. **User Control**: Customize filtering preferences and manage your API settings
+### Connection Management
+1. **Bulk Processing**: Navigate to LinkedIn's invitation manager page
+2. **Smart Automation**: Accept multiple requests with configurable limits and random delays
+3. **Background Tabs**: Automatically opens accepted connections' profiles in background tabs
 
-### 🔗 Connection Management
-1. **Bulk Accept**: Navigate to LinkedIn's invitation manager
-2. **Smart Processing**: Accept multiple requests with configurable limits and random delays
-3. **Status Tracking**: Real-time progress updates and completion statistics
+### Bulk Unfollow Operations
+1. **Tab Detection**: Automatically identifies all open LinkedIn profile tabs
+2. **Parallel Processing**: Processes multiple profiles simultaneously with staggered timing
+3. **UI Adaptation**: Handles different LinkedIn interface scenarios (Following button vs More menu)
 
-### 👥 Bulk Unfollow
-1. **Multi-tab Detection**: Automatically finds all open LinkedIn profile tabs
-2. **Parallel Processing**: Unfollows across multiple profiles simultaneously with staggered timing
-3. **Intelligent UI Handling**: Adapts to different LinkedIn interface scenarios and button states
+### Job Post Collection
+1. **Feed Monitoring**: Continuously scans LinkedIn feed for job-related content
+2. **AI Classification**: Uses machine learning to identify relevant job opportunities
+3. **Data Extraction**: Collects job details including contact information and links
+4. **Export Functionality**: Provides JSON export with 24-hour data retention
 
-### 💼 Job Tracking
-1. **Content Scanning**: Monitors your LinkedIn feed for job-related posts
-2. **AI Classification**: Uses AI to identify relevant job opportunities
-3. **Data Collection**: Aggregates and stores job posts with metadata
-4. **Export Options**: Download collected data in structured JSON format
+## Installation
 
-## Running LinkedIn Power Tools Locally
+To install LinkedIn Power Tools locally:
 
-To run the LinkedIn Power Tools Chrome extension on your local machine, follow these steps:
+1. Clone this repository
+2. Obtain a [Groq API key](https://groq.com) for AI-powered features
+3. Open Chrome and navigate to `chrome://extensions/`
+4. Enable Developer Mode in the top-right corner
+5. Click "Load unpacked" and select the extension directory
+6. Configure your API key in the extension settings
 
-- Clone the repository
-- Get your [Groq](https://groq.com) API key for AI-powered features
-- Open Chrome browser and navigate to `chrome://extensions/`
-- Enable Developer Mode in the top-right corner
-- Click "Load unpacked" and select the extension folder
-- Configure your API key in the extension settings
+## Development Roadmap
+- Enhanced AI classification capabilities for improved content filtering
+- Additional LinkedIn automation tools (message templates, post scheduling)
+- Advanced analytics dashboard with detailed productivity metrics
+- Cross-browser compatibility (Firefox, Edge)
+- Custom content filtering rules via user interface
+- CRM system integrations for professional networking
+- Enhanced job tracking with location and salary filtering
+- Performance optimizations for better extension efficiency
 
-## TODO
-- **Enhanced AI Features**: Expand AI classification capabilities for better content filtering
-- **Additional Automation**: Add more LinkedIn automation tools (message templates, post scheduling)
-- **Advanced Analytics**: Detailed insights dashboard with productivity metrics
-- **Cross-platform Support**: Test and optimize for other browsers (Firefox, Edge)
-- **Custom Filters**: Allow users to create custom content filtering rules via UI
-- **Bulk Messaging**: Add capability for personalized bulk messaging to connections
-- **Profile Analytics**: Add tools for analyzing profile views and engagement
-- **Integration APIs**: Connect with external CRM systems and job boards
-- **Enhanced Job Tracking**: Add filtering by location, salary, and other criteria
-- **Performance Optimization**: Improve extension performance and reduce memory usage
+## Author
 
-## Built with ❤️ by
-
-[Pankaj Tanwar](https://twitter.com/the2ndfloorguy), and checkout his [other side-hustles](https://pankajtanwar.in/side-hustles)
+Built by [Mahesh Deshwal](https://github.com/deshwalmahesh)
 
 ## Contributing
 
-I welcome contributions to the `LinkedIn Power Tools` project! Whether it's a bug fix, a feature request, or improving documentation, your contributions are appreciated.
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests to improve LinkedIn Power Tools.
 
-> Thanks to [Unbaited](https://github.com/danielpetho/unbaited) for the inspiration.
+## Acknowledgments
+
+[Pankaj Tanwar](https://twitter.com/the2ndfloorguy) for initial work and inspiration

@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "LinkedIn Power Tools: Complete LinkedIn Utility Suite",
-    "author": "Pankaj Tanwar",
+    "author": "Mahesh Deshwal",
     "version": "1.0.0",
     "description": "Comprehensive LinkedIn utility extension with AI-powered feed filtering, bulk actions, connection management, job tracking, and enhanced LinkedIn experience.",
     "background": {
