@@ -30,6 +30,9 @@ async function initExtension() {
         return; // Stop execution if no API key
     }
 
+    // Clean up expired job posts (older than 24 hours)
+    cleanupExpiredJobPosts();
+    
     cringeGuardExistingPosts();
     observeNewPosts();
 }
@@ -50,6 +53,49 @@ function updateCringeStats(postText) {
         const newTimeSavedInMinutes = parseFloat(data.timeSavedInMinutes || 0) + estimatedTimeSavedInSeconds / 60; // Convert to minutes
 
         chrome.storage.sync.set({ cringeCount: newCount, timeSavedInMinutes: newTimeSavedInMinutes });
+    });
+}
+
+function saveAIJobPost(post, postText, modelOutput) {
+    const timestamp = new Date().toISOString();
+    
+    // Extract email, phone, and links using regex
+    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+    const phoneRegex = /(\+\d{1,3}[ -]?)?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{4}/g;
+    const linkRegex = /(https?:\/\/[^\s]+)/g;
+    
+    const email = (postText.match(emailRegex) || [""])[0];
+    const phone = (postText.match(phoneRegex) || [""])[0];
+    const links = postText.match(linkRegex) || [];
+    
+    const jobPost = {
+        content: postText,
+        timestamp: timestamp,
+        modelOutput: modelOutput,
+        email: email,
+        phone: phone,
+        links: links
+    };
+
+    chrome.storage.local.get(['aiJobPosts'], (data) => {
+        let posts = data.aiJobPosts || [];
+        posts.push(jobPost);
+        chrome.storage.local.set({ aiJobPosts: posts });
+    });
+}
+
+function cleanupExpiredJobPosts() {
+    chrome.storage.local.get(['aiJobPosts'], (data) => {
+        if (!data.aiJobPosts) return;
+        
+        const now = new Date();
+        const filteredPosts = data.aiJobPosts.filter(post => {
+            const postDate = new Date(post.timestamp);
+            const hoursDiff = (now - postDate) / (1000 * 60 * 60);
+            return hoursDiff < 24; // Keep posts less than 24 hours old
+        });
+        
+        chrome.storage.local.set({ aiJobPosts: filteredPosts });
     });
 }
 
@@ -110,68 +156,168 @@ function cringeGuardThisPost(post) {
     }
 }
 
-async function checkForCringe(post) {
+function highlightAIJobPost(post) {
+    const parentDiv = post.closest('.feed-shared-update-v2__control-menu-container');
+
+    if (parentDiv) {
+        // Create a wrapper div to apply the teal background highlight
+        const wrapper = document.createElement('div');
+        while (parentDiv.firstChild) {
+            wrapper.appendChild(parentDiv.firstChild);
+        }
+
+        // Apply teal background with slight transparency
+        wrapper.style.backgroundColor = 'rgba(0, 128, 128, 0.1)'; // Teal color with transparency
+        wrapper.style.transition = 'all 0.3s ease';
+        wrapper.style.width = '100%';
+        wrapper.style.height = '100%';
+        wrapper.style.position = 'relative';
+        wrapper.style.borderRadius = '8px';
+        wrapper.style.border = '2px solid rgba(0, 128, 128, 0.7)'; // Teal border
+        wrapper.style.boxShadow = '0 0 10px rgba(0, 128, 128, 0.3)'; // Teal shadow
+
+        parentDiv.style.position = 'relative';
+        
+        // Add a small badge indicating it's an AI job post
+        const badge = document.createElement('div');
+        badge.innerText = 'AI Job';
+        badge.style.position = 'absolute';
+        badge.style.top = '10px';
+        badge.style.right = '10px';
+        badge.style.backgroundColor = 'magenta'; // magenta background
+        badge.style.color = 'white';
+        badge.style.padding = '3px 8px';
+        badge.style.borderRadius = '12px';
+        badge.style.fontSize = '12px';
+        badge.style.fontWeight = 'bold';
+        badge.style.zIndex = '5';
+        
+        parentDiv.appendChild(wrapper);
+        parentDiv.appendChild(badge);
+    }
+}
+
+async function analyzePost(post) {
     const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
     const apiKey = await getApiKeyIfEnabled();
-    if (!apiKey) return; // Stop execution if no API key
+    if (!apiKey) return { type: 'GENERAL_POST' }; // Stop execution if no API key
 
-    const SYSTEM_PROMPT_PREFIX = `
-        You are a LinkedIn post analyzer. Your job is to determine if a post meets the following criteria:
+    const postText = post.innerText.trim();
+    
+    const SYSTEM_PROMPT = `
+        You are a LinkedIn post analyzer. Your job is to categorize posts into one of three categories:
+        
+        1. CRINGE_POST: Posts that meet any of the following criteria:
+           - Selling a course, and using some emotional unrelated story
+           - Overly emotional or clickbait stories with no tech-related content
+           - Pseudo profound bullshit. Using "life lessons" or motivational quotes that aren't tied to personal growth in tech or learning
+           - Non-tech political or social commentary that doesn't add value to professional discussions
+           - Posts that are purely personal (vacations, family pictures) without a professional context
+           - Asking to "Comment 'interested' if you want to get the job!"
+           - "Tag 3 people" or "like if you agree" with no substance or tech-related discussions
+           - Generalized or redundant content
+           - Any brand promotional content / Ad
+           - Overly generic advice like "Keep learning every day" without mentioning any specific tools, frameworks, or learning paths
+           - Anything that's just a viral meme or random content not related to a professional or technical goal
+           - Overly personal or TMI content
+           - Excessive self-promotion or bragging
+           - Inappropriate workplace behavior
+           - Forced or artificial inspiration
+           - Obvious humble bragging
+           - Inappropriate emotional display for professional setting
+           - Contains misleading or out-of-context information
+        
+        2. AI_JOB_POST: Posts that are primarily about someone "OFFERING" to hire "SPECIALLY" for AI-related positions or roles, including:
+           - Job postings looking for AI ML, NLP, Gen AI, Computer Vision, data scientists, ML engineers, etc.
+           - Genuinely looking for AI related talent
+           - Recruitment posts for AI-ML Data  science related positions
+           - Posts mentioning hiring for roles involving AI, machine learning, LLMs, etc.
+        
+        3. GENERAL_POST: Any post that doesn't fall into the above categories.
+           - Posts that are job updates OR any other hiring. For example hiring frontend, Data Engineer, Dat Annotator or sales person in an AI or Non AI company
+           - Posts that talk about general stuff about some tech, tool, life in general etc
+        
+        Analyze the post and respond with exactly one of: CRINGE_POST, AI_JOB_POST, or GENERAL_POST.
     `;
 
-    const POST_CRITERIA = `
-        - Selling a course, and using some emotional unrelated story
-        - Overly emotional or clickbait stories with no tech-related content
-        - Using "life lessons" or motivational quotes that aren't tied to personal growth in tech or learning.
-        - Non-tech political or social commentary that doesn’t add value to professional discussions
-        - Posts that are purely personal (vacations, family pictures) without a professional context
-        - asking to "Comment 'interested' if you want to get the job!"
-        - "Tag 3 people" or "like if you agree" with no substance or tech-related discussions
-        - Generalized or redundant content
-        - Any brand promotional content / Ad
-        - Overly generic advice like "Keep learning every day" without mentioning any specific tools, frameworks, or learning paths.
-        - Anything that’s just a viral meme or random content not related to a professional or technical goal.
-        - Written by an LLM
-        - Overly personal or TMI content
-        - Excessive self-promotion or bragging
-        - Inappropriate workplace behavior
-        - Forced or artificial inspiration
-        - Obvious humble bragging
-        - Inappropriate emotional display for professional setting
-        - Contains misleading or out-of-context information
-    `;
+    let modelOutput = '';
+    let postType = 'GENERAL_POST';
+    
+    let attempts = 0;
+    const maxAttempts = 2; // Initial attempt + 1 retry
 
-    const prompt = `${SYSTEM_PROMPT_PREFIX} ${POST_CRITERIA}
-        If any of the above criteria are met, the post should be considered as a cringe post.`;
+    while (attempts < maxAttempts) {
+        try {
+            // Make API request
+            const response = await fetch(GROQ_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: "meta-llama/llama-4-maverick-17b-128e-instruct",
+                    messages: [
+                        { role: "system", content: SYSTEM_PROMPT },
+                        { role: "user", content: "LinkedIn Post:\n\n" + postText + "\n\nCategorize this post as either CRINGE_POST, AI_JOB_POST, or GENERAL_POST." }
+                    ],
+                    temperature: 0.1 // Lowering temperature for more consistent responses
+                })
+            });
 
-    try {
-        const response = await fetch(GROQ_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: "gemma2-9b-it",
-                messages: [
-                    { role: "system", content: prompt },
-                    { role: "user", content: "Linkedin Post:\n\n" + post.innerText.trim() + "\n\nVery briefly list if the post matches any of the defined cringe criteria. If none, conclude with POST_IS_NOT_CRINGE otherwise POST_IS_CRINGE." }
-                ],
-                temperature: 0.1 // Lowering temperature for more consistent responses
-            })
-        });
+            if (!response.ok) {
+                if (response.status === 429 && attempts < maxAttempts - 1) {
+                    console.warn(`API error 429: Too Many Requests. Retrying in 60 seconds... (Attempt ${attempts + 1}/${maxAttempts})`);
+                    attempts++;
+                    await new Promise(resolve => setTimeout(resolve, 60000)); // Wait for 60 seconds
+                    continue; // Retry the request
+                } else {
+                    console.error(`API error: ${response.status} ${response.statusText}`);
+                    return { type: 'GENERAL_POST' }; // Return general post on other errors or max retries reached
+                }
+            }
 
-        const data = await response.json();
-        const isCringe = data.choices[0].message.content.toLowerCase().includes('post_is_cringe');
-        if (isCringe) {
-            cringeGuardThisPost(post);
-            updateCringeStats(post.innerText);
+            const data = await response.json();
+            
+            if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+                console.error('Unexpected API response format:', data);
+                return { type: 'GENERAL_POST' };
+            }
+            
+            modelOutput = data.choices[0].message.content.toLowerCase();
+            
+            // Determine post type
+            if (modelOutput.includes('cringe_post')) {
+                postType = 'CRINGE_POST';
+            } else if (modelOutput.includes('ai_job_post')) {
+                postType = 'AI_JOB_POST';
+            }
+            
+            // Handle post based on its type
+            if (postType === 'CRINGE_POST') {
+                cringeGuardThisPost(post);
+                updateCringeStats(postText);
+            } else if (postType === 'AI_JOB_POST') {
+                highlightAIJobPost(post);
+                saveAIJobPost(post, postText, modelOutput);
+            }
+            break; // Exit loop on successful API call and processing
+            
+        } catch (error) {
+            console.error('Error analyzing post:', error);
+            // Keep the default GENERAL_POST type in case of errors
+            // If it's a network error or similar during fetch, and we haven't exhausted retries, 
+            // we might want to retry here too, but for now, focusing on 429.
+            break; // Exit loop on other errors
         }
-        return isCringe;
-    } catch (error) {
-        console.error('Error checking post:', error);
-        return false;
     }
+    
+    return { type: postType, modelOutput: modelOutput };
+}
+
+async function checkForCringe(post) {
+    const result = await analyzePost(post);
+    return result.type === 'CRINGE_POST';
 }
 
 const debouncedCheckForCringe = debounce(checkForCringe, 1000);
@@ -195,6 +341,21 @@ function observeNewPosts() {
                         for (const post of posts) {
                             if (!alreadyProcessedPosts.has(post)) {
                                 alreadyProcessedPosts.add(post);
+                                
+                                // Check if this is a promoted post
+                                const postContainer = post.closest('.feed-shared-update-v2');
+                                if (postContainer) {
+                                    // Check for promoted content in different possible locations
+                                    const isPromoted = checkIfPromoted(postContainer);
+                                    
+                                    if (isPromoted) {
+                                        // Directly apply blur to promoted content without API call
+                                        cringeGuardThisPost(post);
+                                        continue;
+                                    }
+                                }
+                                
+                                // If not promoted, proceed with normal analysis
                                 checkForCringe(post);
                             }
                         }
@@ -205,6 +366,47 @@ function observeNewPosts() {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Helper function to check if a post is promoted
+function checkIfPromoted(postContainer) {
+    // Simple text-based approach: Check if the entire container has 'Promoted' text
+    // This is the most reliable method as it doesn't depend on specific HTML structure
+    if (postContainer.textContent.includes('Promoted')) {
+        // Once we find the word, verify it's actually a promoted post by checking context
+        // We'll look for common elements that appear in ads
+        
+        // Check for "Learn more" button which is common in ads
+        const learnMoreButton = postContainer.querySelector('.update-components-button__text');
+        if (learnMoreButton && learnMoreButton.textContent.trim() === 'Learn more') {
+            return true;
+        }
+        
+        // Check for attributionsrc which is used for tracking ad clicks
+        const adLinks = postContainer.querySelectorAll('[attributionsrc]');
+        if (adLinks.length > 0) {
+            return true;
+        }
+        
+        // Check specific elements that contain "Promoted" text
+        const promotedElements = [
+            '.update-components-actor__description',
+            '.update-components-actor__sub-description',
+            '.visually-hidden',
+            'span[aria-hidden="true"]'
+        ];
+        
+        for (const selector of promotedElements) {
+            const elements = postContainer.querySelectorAll(selector);
+            for (const el of elements) {
+                if (el.textContent.includes('Promoted')) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
 }
 
 initExtension();

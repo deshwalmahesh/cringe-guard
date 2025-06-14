@@ -4,191 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CringeGuard - Settings</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #0077b5;
-            color: #1f2937;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-            padding: 24px;
-            margin: 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 600;
-            color: #0077b5;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo-icon {
-            width: 28px;
-            height: 28px;
-            background: #0077b5;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .settings-icon {
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            color: #0077b5;
-        }
-
-        .settings-icon:hover {
-            background-color: rgba(0, 119, 181, 0.1);
-            transform: rotate(30deg);
-        }
-
-        .card {
-            margin-bottom: 24px;
-        }
-
-        .card h2 {
-            font-size: 20px;
-            color: #0077b5;
-            margin-bottom: 16px;
-        }
-
-        .api-key-section {
-            margin-top: 16px;
-            width: 100%;
-        }
-
-        .api-key-section label {
-            font-size: 14px;
-            color: #1f2937;
-            font-weight: 500;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-
-        .api-key-section input {
-            flex: 1;
-            /* Makes the input take up remaining space */
-            padding: 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #1f2937;
-            width: 100%;
-            /* Ensures input doesn't overflow */
-            box-sizing: border-box;
-            /* Ensures padding is included in width */
-        }
-
-        .api-key-section button {
-            background: #0077b5;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        .api-key-section button:hover {
-            background: #005f8a;
-        }
-
-        .instructions {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-            background: #f1f6f9;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-        }
-
-        .instructions a {
-            color: #0077b5;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .instructions a:hover {
-            text-decoration: underline;
-        }
-
-        .description {
-            font-size: 14px;
-            color: #64748b;
-            text-align: center;
-            margin-top: 24px;
-            line-height: 1.6;
-        }
-
-        .footer {
-            font-size: 12px;
-            color: #64748b;
-            text-align: center;
-            margin-top: 24px;
-        }
-
-        .footer a {
-            color: #005f8a;
-            font-weight: 600;
-            text-decoration: none;
-            transition: color 0.2s ease-in-out;
-        }
-
-        .footer a:hover {
-            color: #003f5e;
-            text-decoration: underline;
-        }
-
-        .success-message {
-            font-size: 14px;
-            color: #0077b5;
-            margin-top: 8px;
-            font-weight: 500;
-            display: none;
-            transition: opacity 0.3s ease-in-out;
-        }
-    </style>
+    <title>LinkedIn Power Tools - Settings</title>
+    <link rel="stylesheet" href="../styles/settings.css">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">
-                <div class="logo-icon">CG</div>
-                Cringe Guard - Settings
+                <div class="logo-icon">LPT</div>
+                LinkedIn Power Tools - Settings
             </div>
             <svg class="settings-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -200,11 +25,9 @@
         </div>
 
         <div class="card">
-            <h2>Groq API Key</h2>
+            <h2>🔑 Groq API Key</h2>
             <div class="instructions">
-                <p>
-                    To get your Groq API key, follow these steps:
-                </p>
+                <p>To get your Groq API key, follow these steps:</p>
                 <ol>
                     <li>Sign up or log in to your <a href="https://groq.com/" target="_blank">Groq account</a>.</li>
                     <li>Navigate to the API section in your dashboard.</li>
@@ -214,21 +37,22 @@
             </div>
             <div class="api-key-section">
                 <label for="api-key">Enter your Groq API Key:</label>
-                <div class="input-group">
-                    <input type="text" id="api-key" placeholder="Your Groq API Key">
-                    <button id="save-button">Save</button>
+                <div class="input-wrapper">
+                    <input type="text" id="api-key" placeholder="gsk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                    <button id="save-button">💾 Save API Key</button>
+                    <div class="success-message" id="success-message">✅ API Key saved successfully!</div>
                 </div>
             </div>
         </div>
 
         <div class="description">
-            Cringe Guard filters out cringe content on your LinkedIn feed. It uses AI to analyse LinkedIn posts in real
-            time and hides cringe worthy content.
+            LinkedIn Power Tools provides comprehensive LinkedIn utilities including AI-powered feed filtering, bulk 
+            connection management, job post tracking, and automation tools to enhance your LinkedIn experience.
         </div>
 
         <div class="footer">
-            <p>Open-source with ❤️ by <a href="https://twitter.com/the2ndfloorguy" target="_blank">Pankaj Tanwar</a></p>
-            <p>Contribute on <a href="https://github.com/Pankajtanwarbanna/cringe-guard" target="_blank">GitHub</a>.</p>
+            <p>Developed by <a href="https://github.com/deshwalmahesh" target="_blank">Mahesh Deshwal</a></p>
+            <p>Contribute on <a href="https://github.com/deshwalmahesh/cringe-guard" target="_blank">GitHub</a> • <a href="../Privacy-Policy.md" target="_blank">Privacy Policy</a></p>
         </div>
     </div>
 

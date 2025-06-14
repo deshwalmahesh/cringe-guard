@@ -1,27 +1,32 @@
 **Privacy Policy**  
-Effective Date: 16th Feb 2025  
+Effective Date: 14th June 2025  
 
 **Data Collection**  
-Cringe Guard does not collect, store, or share any personal data. The extension processes LinkedIn posts in real-time within your browser to determine whether they match filtering criteria. No user data, login credentials, or browsing history is collected.  
+LinkedIn Power Tools does not collect, store, or transmit any personal data beyond your local browser storage. The extension processes LinkedIn content locally within your browser to provide automation utilities and content filtering. No user credentials, personal information, or browsing history is collected or transmitted to external servers.  
 
 **API Usage**  
-When you use Cringe Guard:  
-- The content of LinkedIn posts is sent to Groq's API for analysis to determine relevance.  
-- Your API key is stored locally in your browser and is never transmitted elsewhere.  
-- The extension does not store or retain any analyzed data after processing.  
+When using the AI-powered feed filtering feature:  
+- LinkedIn post content is analyzed using Groq's API for content classification
+- Your API key is stored locally in browser storage and never transmitted to third parties
+- Post content is sent to Groq only when AI filtering is enabled
+- No analyzed content is stored or retained after processing  
 
 **Third-Party Services**  
-Cringe Guard relies on Groq's API to analyze LinkedIn posts and classify content based on filtering rules. We do not control how Groq handles data, so we encourage you to review [Groq's privacy policy](https://groq.com/privacy-policy/) for details on their data processing practices.  
+This extension integrates with Groq's API for AI-powered content analysis. When AI filtering is enabled, post content is sent to Groq for classification purposes. Please review [Groq's Privacy Policy](https://groq.com/privacy-policy/) for information about their data handling practices.  
 
-**Permissions Justification**  
-- **activeTab**: Needed to analyze and modify the LinkedIn feed in real-time.  
-- **storage**: Used to save user preferences, such as filtering settings and API configurations.  
-- **host permissions (linkedin.com)**: Required to read and process LinkedIn content for filtering purposes.  
+**Permissions Explanation**  
+- **activeTab**: Required to interact with LinkedIn pages and provide utility functions
+- **storage**: Used to save user preferences, API keys, and temporary analytics data locally
+- **tabs**: Enables bulk operations across multiple LinkedIn tabs simultaneously
+- **scripting**: Necessary to inject automation scripts for bulk actions and content filtering
+- **host permissions (linkedin.com)**: Required to read and interact with LinkedIn content for all features  
 
 **Security Measures**  
-- The extension does not execute remote code or store external scripts.  
-- API interactions are limited to filtering LinkedIn content; no other browsing data is sent or processed.  
-- All user preferences remain stored locally within the browser.  
+- All operations are performed locally within your browser environment
+- No remote code execution or external script loading occurs
+- API communications are limited to content analysis when explicitly enabled
+- User preferences and data remain in local browser storage only
+- No tracking, analytics, or usage data collection  
 
 **Contact**  
-For privacy concerns or questions, please reach out through our GitHub repository.
+For privacy-related questions or concerns, please contact the developer at [GitHub](https://github.com/deshwalmahesh).

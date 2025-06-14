@@ -1,9 +1,12 @@
 {
     "manifest_version": 3,
-    "name": "Cringe Guard: filter out cringe content on your LinkedIn feed using AI",
-    "author": "Pankaj Tanwar",
-    "version": "0.0.3",
-    "description": "AI-powered Chrome extension that filters cringe, clickbait & low-value posts from your LinkedIn feed in real-time.",
+    "name": "LinkedIn Power Tools: Complete LinkedIn Utility Suite",
+    "author": "Mahesh Deshwal",
+    "version": "1.0.0",
+    "description": "Comprehensive LinkedIn utility extension with AI-powered feed filtering, bulk actions, connection management, job tracking, and enhanced LinkedIn experience.",
+    "background": {
+        "service_worker": "scripts/background.js"
+    },
     "content_scripts": [
         {
             "js": [
@@ -11,6 +14,17 @@
             ],
             "matches": [
                 "https://www.linkedin.com/feed/*"
+            ]
+        },
+        {
+            "js": [
+                "scripts/linkedin-utils.js",
+                "scripts/unfollow-core.js",
+                "scripts/bulk_unfollow.js",
+                "scripts/accept-requests.js"
+            ],
+            "matches": [
+                "https://www.linkedin.com/*"
             ]
         }
     ],
@@ -22,10 +36,13 @@
     },
     "action": {
         "default_popup": "./pages/popup.html",
-        "default_title": "Cringe Guard"
+        "default_title": "LinkedIn Power Tools"
     },
     "options_page": "./pages/settings.html",
     "permissions": [
-        "storage"
+        "storage",
+        "tabs",
+        "activeTab",
+        "scripting"
     ]
 }

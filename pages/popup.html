@@ -4,235 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cringe Guard - filter out cringe content using AI, in realtime.</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #0077b5;
-            color: #1f2937;
-            width: 320px;
-            height: auto;
-            overflow: hidden;
-        }
-
-        .container {
-            padding: 16px;
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 12px;
-            border-radius: 8px;
-            position: sticky;
-            top: 0;
-            backdrop-filter: blur(8px);
-        }
-
-        .logo {
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .logo-icon {
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0077b5;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .settings-icon {
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            color: white;
-        }
-
-        .settings-icon:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: rotate(30deg);
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 12px;
-        }
-
-        .toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .toggle span {
-            font-weight: bold;
-            color: #0077b5;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 22px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #e5e7eb;
-            transition: .3s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background: #0077b5;
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(18px);
-        }
-
-        .stats {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-            display: flex;
-            justify-content: space-between;
-            background: #f1f6f9;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            color: #0077b5;
-            font-weight: 600;
-            font-size: 16px;
-            display: block;
-        }
-
-        .filtered-content {
-            background: #f8fafc;
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 12px;
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        .content-title {
-            font-weight: 500;
-            color: #0077b5;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .post-item {
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .post-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .shield-icon {
-            color: #0077b5;
-            opacity: 0.8;
-        }
-
-        .refresh-button {
-            background: none;
-            border: none;
-            color: #0077b5;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .refresh-button:hover {
-            background: #e1f0f7;
-        }
-
-        .error-card {
-            background: #fee2e2;
-            border: 1px solid #ef4444;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #dc2626;
-        }
-
-        .error-card svg {
-            flex-shrink: 0;
-        }
-    </style>
+    <title>LinkedIn Power Tools - Complete LinkedIn Utility Suite</title>
+    <link rel="stylesheet" href="../styles/popup.css">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">
-                <div class="logo-icon">CG</div>
-                Cringe Guard
+                <div class="logo-icon">LPT</div>
+                <span>LinkedIn Power Tools</span>
             </div>
             <svg class="settings-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -243,33 +24,89 @@
             </svg>
         </div>
 
-        <!-- error card if api key not found -->
+        <!-- Error card if API key not found -->
         <div class="error-card">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            Add your Groq API key in settings
+            <span>Add your Groq API key in settings for AI-powered feed filtering</span>
         </div>
 
         <div class="card">
             <div class="toggle">
-                <span class="toggle-label">Filter LinkedIn Feed</span>
+                <span class="toggle-label">AI Feed Filter</span>
                 <label class="switch">
                     <input type="checkbox" id="toggle-switch">
                     <span class="slider"></span>
                 </label>
             </div>
+            
             <div class="stats">
                 <div class="stat-item">
                     <span class="stat-value" id="cringe-count">0</span>
-                    Cringe Dodged
+                    <div class="stat-label">Posts Filtered</div>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value" id="time-saved">0m</span>
-                    Time Saved
+                    <div class="stat-label">Time Saved</div>
                 </div>
+            </div>
+            
+            <!-- AI Job Posts Section -->
+            <div class="section ai-jobs-section" style="display: none;">
+                <div class="section-header">
+                    <h3 class="section-title success">🤖 AI Job Posts</h3>
+                    <span class="status-badge success job-count">0</span>
+                </div>
+                <p class="section-description">AI job posts found in the last 24 hours</p>
+                <button id="download-jobs" class="btn btn-success">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Job Posts
+                </button>
+            </div>
+            
+            <!-- Accept Requests Section -->
+            <div class="section accept-requests-section">
+                <div class="section-header">
+                    <h3 class="section-title success">🤝 Accept Requests</h3>
+                    <span id="accept-status" class="status-badge ready">Ready</span>
+                </div>
+                <p class="section-description">Accept pending connection requests automatically</p>
+                <div class="input-group">
+                    <label>Count:</label>
+                    <input type="number" id="accept-count" min="1" max="20" value="10">
+                </div>
+                <button id="accept-requests-btn" class="btn btn-success">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Accept Requests
+                </button>
+            </div>
+
+            <!-- Bulk Unfollow Section -->
+            <div class="section bulk-unfollow-section">
+                <div class="section-header">
+                    <h3 class="section-title danger">👥 Bulk Unfollow</h3>
+                    <span id="unfollow-status" class="status-badge ready">Ready</span>
+                </div>
+                <p class="section-description">Unfollow people across multiple LinkedIn profile tabs</p>
+                <button id="bulk-unfollow-btn" class="btn btn-danger">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    Bulk Unfollow
+                </button>
             </div>
         </div>
     </div>

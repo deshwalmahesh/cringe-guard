@@ -1,51 +1,91 @@
-# cringe-guard 📵
+# LinkedIn Power Tools
 
-Control your LinkedIn feed with an LLM of your choice. A chrome extension that filters out cringe content (engagement click-bait, promotional content, and low-value off-topic posts etc) on your LinkedIn feed. It uses AI to analyse LinkedIn posts in real time and hides cringe worthy content.
+A comprehensive LinkedIn utility extension that enhances your LinkedIn experience with AI-powered content filtering, automation tools, and bulk operations. This Chrome extension provides essential LinkedIn utilities for improved productivity and content management.
 
-This prototype demonstrates how AI can empower us to have more control over the content we consume.
+## Features
+
+### AI-Powered Feed Filtering
+- **Smart Content Analysis**: Uses AI to identify and filter low-quality content including engagement bait, promotional spam, and off-topic posts
+- **Real-time Processing**: Analyzes posts as you scroll through your LinkedIn feed
+- **Customizable Filtering**: Configure AI filtering preferences through extension settings
+
+### Connection Management
+- **Bulk Accept Requests**: Automatically accept multiple connection requests with smart batch processing
+- **Rate Limiting**: Built-in delays and limits to avoid detection
+- **Progress Tracking**: Real-time status updates during bulk operations
+
+### Bulk Unfollow Tools
+- **Multi-tab Processing**: Unfollow people across multiple LinkedIn profile tabs simultaneously
+- **Intelligent Detection**: Automatically detects Following status and handles different UI scenarios
+- **Safe Automation**: Random delays and error handling to prevent account restrictions
+
+### Job Post Tracking
+- **AI Job Detection**: Automatically identifies and collects AI/tech job postings from your feed
+- **Data Export**: Download collected job posts as JSON files with contact information
+- **24-hour Aggregation**: Tracks job posts found within the last 24 hours
+
+### Analytics & Insights
+- **Content Statistics**: Track filtered posts count and estimated time saved
+- **Usage Metrics**: Monitor extension usage and productivity improvements
+- **Data Export**: Download analytics data for external analysis
 
 ## Demo
 
-![Cringe Guard Demo Video](./images/demo-cringe-guard.gif)
+![LinkedIn Power Tools Demo](./images/demo-cringe-guard.gif)
 
-## How it works?
+## How it works
 
-The cringe-guard Chrome extension filters out cringe content from your LinkedIn feed using an AI model. When you browse LinkedIn:
+### AI Feed Filtering
+1. **Content Detection**: Extension detects new posts as they appear in your LinkedIn feed
+2. **AI Analysis**: Post content is analyzed using Groq's API to classify content quality
+3. **Smart Filtering**: Low-quality posts are blurred with click-to-view functionality
+4. **Job Highlighting**: AI-identified job posts are highlighted with special badges
 
-1. **Detects New Posts**: As new posts appear in your feed, the extension detects them in real time.
-2. **Sends for Analysis**: The post content is sent to an AI model (via an API) that classifies it based on predefined "cringe" criteria (e.g., engagement bait, overly promotional content, etc.).
-3. **Applies Blur**: Posts identified as cringe are blurred to keep your feed cleaner and more relevant.
-4. **User Control**: Users can customize the types of posts they want to see and hide, and control their settings (like 
-API keys) via modifying `content.js`.
+### Connection Management
+1. **Bulk Processing**: Navigate to LinkedIn's invitation manager page
+2. **Smart Automation**: Accept multiple requests with configurable limits and random delays
+3. **Background Tabs**: Automatically opens accepted connections' profiles in background tabs
 
-## Running Cringe-Guard Locally
+### Bulk Unfollow Operations
+1. **Tab Detection**: Automatically identifies all open LinkedIn profile tabs
+2. **Parallel Processing**: Processes multiple profiles simultaneously with staggered timing
+3. **UI Adaptation**: Handles different LinkedIn interface scenarios (Following button vs More menu)
 
-To run the Cringe-Guard Chrome extension on your local machine, follow these steps:
+### Job Post Collection
+1. **Feed Monitoring**: Continuously scans LinkedIn feed for job-related content
+2. **AI Classification**: Uses machine learning to identify relevant job opportunities
+3. **Data Extraction**: Collects job details including contact information and links
+4. **Export Functionality**: Provides JSON export with 24-hour data retention
 
-- Clone the repository.
-- Update your [groq](https://groq.com) API key in `content.js`.
-- Open Chrome browser and navigate to the Extensions page by typing `chrome://extensions/` in the URL bar.
-- Enable Developer Mode in the top-right corner.
-- Click on the Load unpacked button.
-- Select the folder where the extension files are located (`cringe-guard` folder).
+## Installation
 
-## TODO
-- Refactor the codebase a bit
-- Allow users to input API key through a simple interface in popup.html.
-- Provide users with the option to either blur or completely remove content from the DOM.
-- In addition to analyzing the text content of posts, automatically detect and remove posts with "Promoted" tags by default.
-- Enable custom post filters, letting users choose which posts to show or hide via UI
-- Persist user settings (API key and filters) using Chrome Storage API.
-- Test cross-browser compatibility
-- Bug: The extension is unexpectedly logging `GET chrome-extension://invalid/ net::ERR_FAILED` in the console for some reason.
-- Redesign the logo to better reflect the purpose of the extension
+To install LinkedIn Power Tools locally:
 
-## Built with ❤️ by
+1. Clone this repository
+2. Obtain a [Groq API key](https://groq.com) for AI-powered features
+3. Open Chrome and navigate to `chrome://extensions/`
+4. Enable Developer Mode in the top-right corner
+5. Click "Load unpacked" and select the extension directory
+6. Configure your API key in the extension settings
 
-[Pankaj Tanwar](https://twitter.com/the2ndfloorguy), and checkout his [other side-hustles](https://pankajtanwar.in/side-hustles)
+## Development Roadmap
+- Enhanced AI classification capabilities for improved content filtering
+- Additional LinkedIn automation tools (message templates, post scheduling)
+- Advanced analytics dashboard with detailed productivity metrics
+- Cross-browser compatibility (Firefox, Edge)
+- Custom content filtering rules via user interface
+- CRM system integrations for professional networking
+- Enhanced job tracking with location and salary filtering
+- Performance optimizations for better extension efficiency
+
+## Author
+
+Built by [Mahesh Deshwal](https://github.com/deshwalmahesh)
 
 ## Contributing
 
-I welcome contributions to the `cringe-guard` project! Whether it's a bug fix, a feature request, or improving documentation, your contributions are appreciated.
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests to improve LinkedIn Power Tools.
 
-> Thanks to [Unbaited](https://github.com/danielpetho/unbaited) for the inspiration.
+## Acknowledgments
+
+[Pankaj Tanwar](https://twitter.com/the2ndfloorguy) for initial work and inspiration
